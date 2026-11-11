@@ -4,19 +4,31 @@ An Android application demonstrating **On-Device Artificial Intelligence** using
 
 ---
 
-## 📱 Screenshots & App Showcase
+## 📱 Screenshots & App Showcase (Parent-Child Hierarchy)
+
+```text
+📱 App Main Entry Point (Home Dashboard)
+ │
+ ├── 📸 Child Mode 1: Fast In-App CameraX Capture (Zero System Confirmation)
+ │
+ └── 🖼️ Child Mode 2: On-Image Text Inspector (Exact Coordinates & Pinch-to-Zoom)
+```
+
+### 1. 🏠 Parent Surface: Main Home Dashboard
+> **Central Entry Point**: Built with Material 3 floating action bar containing `Take Photo` and `Gallery` controls.
 
 <p align="center">
-  <img src="screenshots/ocr_app_preview.webp" width="31%" alt="Home Dashboard" />
-  &nbsp;
-  <img src="screenshots/ocr_camera_text_extractor_preview.webp" width="31%" alt="In-App Camera Capture" />
-  &nbsp;
-  <img src="screenshots/ocr_galery_image_text_extractor_preview.webp" width="31%" alt="On-Image Selectable Text" />
+  <img src="screenshots/ocr_app_preview.webp" width="300" alt="Parent: Home Dashboard" />
 </p>
 
-| 🏠 Home Dashboard | 📸 Fast In-App CameraX | 🖼️ On-Photo Text Inspector |
-| :---: | :---: | :---: |
-| Material 3 floating FAB controls (`Take Photo` & `Gallery`) | Zero-latency camera capture without system prompts | Selectable text overlays positioned at exact image coordinates |
+---
+
+### 2. 🌿 Child Features & Extraction Modes
+
+| 📸 Child Feature 1: Fast In-App CameraX | 🖼️ Child Feature 2: On-Image Text Inspector |
+| :---: | :---: |
+| <img src="screenshots/ocr_camera_text_extractor_preview.webp" width="280" alt="Child: In-App CameraX" /> | <img src="screenshots/ocr_galery_image_text_extractor_preview.webp" width="280" alt="Child: On-Image Text Inspector" /> |
+| **Key Capabilities**:<br>• **Zero System Confirmation**: Eliminates external system camera app prompts (`X` / `✓`).<br>• **Minimal Latency**: In-memory `ImageProxy` capture.<br>• **0% Idle Battery Drain**: Unbinds camera sensor immediately after capture. | **Key Capabilities**:<br>• **Exact Coordinate Overlay**: Selectable text positioned at `(X, Y, W, H)` on photo.<br>• **Direct Touch & Drag**: Touch and drag over photo text to select & copy.<br>• **Pinch-to-Zoom (1x to 5x)**: Text selection overlays move in sync with photo zoom & pan. |
 
 ---
 
