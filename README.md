@@ -14,10 +14,10 @@ An Android application demonstrating **On-Device Artificial Intelligence** using
 
   <!-- BRANCHING FLOW DIAGRAM -->
   <pre>
-                      ┌─────────────────────────┴─────────────────────────┐
-                      │                                                   │
-                      ▼                                                   ▼
-            [🖼️ Gallery Button]                                 [📸 Take Photo Button]
+               ┌─────────────────────────┴─────────────────────────┐
+               │                                                   │
+               ▼                                                   ▼
+     [🖼️ Gallery Button]                                 [📸 Take Photo Button]
   </pre>
 
   <!-- CHILD SCREENS GRID -->
