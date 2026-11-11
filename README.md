@@ -1,39 +1,61 @@
-# AI-First Development: On-Device Text Recognition (OCR)
+# AI-First Development: Google Lens-Style On-Device Text Recognition (OCR)
 
-An Android application demonstrating **On-Device Artificial Intelligence** using **Google ML Kit Text Recognition v2** and **Jetpack Compose (Material 3)**.
+An Android application demonstrating **On-Device Artificial Intelligence** using **Google ML Kit Text Recognition**, **CameraX**, and **Jetpack Compose (Material 3)**. Inspired by Google Lens, it captures photos or picks gallery images and positions selectable text directly over the image at exact physical coordinates with full pinch-to-zoom & pan support.
+
+---
+
+## 📱 Screenshots & App Showcase
 
 <p align="center">
-  <img src="screenshots/ocr_app_preview.png" alt="On-Device ML Kit OCR App Demo" width="300" />
+  <img src="screenshots/ocr_app_preview.webp" width="31%" alt="Home Dashboard" />
+  &nbsp;
+  <img src="screenshots/ocr_camera_text_extractor_preview.webp" width="31%" alt="In-App Camera Capture" />
+  &nbsp;
+  <img src="screenshots/ocr_galery_image_text_extractor_preview.webp" width="31%" alt="On-Image Selectable Text" />
 </p>
 
+| 🏠 Home Dashboard | 📸 Fast In-App CameraX | 🖼️ On-Photo Text Inspector |
+| :---: | :---: | :---: |
+| Material 3 floating FAB controls (`Take Photo` & `Gallery`) | Zero-latency camera capture without system prompts | Selectable text overlays positioned at exact image coordinates |
+
 ---
 
-## 🌟 Highlights
+## 🌟 Highlights & Key Features
 
 - **100% On-Device & Offline**: Processes images locally on the device hardware (CPU/GPU/NPU). No network latency, no cloud API costs, zero data sent to external servers.
-- **Privacy-First**: User photos remain strictly on the device.
-- **Ultra-Lightweight APK**: Employs Google Play Services dynamic thin modules, adding less than 1 MB to the final APK size.
-- **Modern Android Photo Picker**: Uses `ActivityResultContracts.PickVisualMedia` with zero storage permissions required (`READ_EXTERNAL_STORAGE` not needed).
-- **Jetpack Compose UI**: Built entirely with Material 3, featuring real-time loading spinners, robust error handling, and one-click copy to clipboard.
+- **Exact On-Image Selectable Text**: Detected text lines are positioned at their exact physical coordinates $(X, Y, W, H)$ directly over the photo. Touch and drag across any text on the photo to select and copy.
+- **Pinch-To-Zoom & Pan Synchronization**: Full gesture support for 1x to 5x pinch-to-zoom and dragging around. Text selection overlays remain 100% aligned with the zoomed photo in real time. Double-tap to reset.
+- **Zero Confirmation CameraX Capture**: Custom in-app camera using `ImageCapture.CAPTURE_MODE_MINIMIZE_LATENCY`. Eliminates the system camera app's confirmation screen (`X` / `✓`).
+- **Battery-Saving Lifecycle Management**: Unbinds the camera hardware sensor immediately after capture so idle battery usage and CPU/GPU load drop to 0% while inspecting photos.
+- **Automatic Sensor Orientation Correction**: Applies image rotation matrix (`Matrix().postRotate(rotationDegrees)`) to display photo bitmaps at their exact upright visual angle.
+- **Privacy-First**: Photos and scanned text stay strictly on the user's device.
+- **Modern Photo Picker Integration**: Uses `ActivityResultContracts.PickVisualMedia` with zero storage permissions required.
 
 ---
 
-## 🏗️ Architecture & Pipeline
+## 🏗️ Architecture & Data Flow
 
 ```text
-[User selects image via Photo Picker]
-                 │
-                 ▼
-       [Obtain Content Uri]
-                 │
-                 ▼
-[InputImage.fromFilePath(context, uri)]
-                 │
-                 ▼
-[recognizer.process(inputImage)]  ───► Runs local ML model on device
-                 │
-                 ├──► [onSuccess] ──► Update Compose State with visionText.text
-                 └──► [onFailure] ──► Display Error in Material 3 Card
+       [Take Photo (CameraX)  OR  Select Image (Photo Picker)]
+                                │
+                                ▼
+         [Rotate Bitmap to Upright Sensor Orientation]
+                                │
+                                ▼
+           [InputImage.fromBitmap(bitmap, 0)]
+                                │
+                                ▼
+  [TextRecognition.getClient().process(inputImage)]  ──► On-Device ML Model
+                                │
+                                ▼
+               [Extract VisionText & Bounding Boxes]
+                                │
+                                ▼
+[Overlay Selectable Text at Exact Image Coordinates (X, Y, W, H)]
+                                │
+  ├──► Touch & Drag over image words to Select / Copy
+  ├──► Pinch-to-Zoom (1x to 5x) & Pan photo with gestures
+  └──► One-Tap Copy All / Retake Action Toolbar
 ```
 
 ---
@@ -42,8 +64,9 @@ An Android application demonstrating **On-Device Artificial Intelligence** using
 
 - **Language**: Kotlin
 - **UI Framework**: Jetpack Compose with Material 3
+- **Camera Stream**: CameraX (`androidx.camera:camera-core`, `camera-camera2`, `camera-lifecycle`, `camera-view`)
+- **Machine Learning**: [Google ML Kit Text Recognition](https://developers.google.com/ml-kit/vision/text-recognition/v2/android) (`com.google.android.gms:play-services-mlkit-text-recognition`)
 - **Image Loading**: [Coil](https://coil-kt.github.io/coil/) (`io.coil-kt:coil-compose`)
-- **Machine Learning**: [Google ML Kit Text Recognition v2](https://developers.google.com/ml-kit/vision/text-recognition/v2/android) (`com.google.android.gms:play-services-mlkit-text-recognition`)
 
 ### `app/build.gradle.kts`
 ```kotlin
@@ -54,22 +77,32 @@ dependencies {
     implementation(libs.androidx.compose.material.icons.extended)
 
     // ML Kit Text Recognition (Play Services unbundled version)
-    implementation("com.google.android.gms:play-services-mlkit-text-recognition:19.0.1")
+    implementation(libs.play.services.mlkit.text.recognition)
+
+    // CameraX for in-app capture
+    implementation(libs.androidx.camera.core)
+    implementation(libs.androidx.camera.camera2)
+    implementation(libs.androidx.camera.lifecycle)
+    implementation(libs.androidx.camera.view)
 
     // Image loading for Compose
-    implementation("io.coil-kt:coil-compose:2.7.0")
+    implementation(libs.coil.compose)
 }
 ```
 
-### `AndroidManifest.xml` Configuration
-To instruct Google Play to pre-download the OCR model when the app is installed from the Play Store:
-
+### `AndroidManifest.xml` Permissions
 ```xml
-<application ...>
-    <meta-data
-        android:name="com.google.mlkit.vision.DEPENDENCIES"
-        android:value="ocr" />
-</application>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-feature android:name="android.hardware.camera.any" />
+
+    <application ...>
+        <meta-data
+            android:name="com.google.mlkit.vision.DEPENDENCIES"
+            android:value="ocr" />
+    </application>
+</manifest>
 ```
 
 ---
@@ -86,25 +119,10 @@ To instruct Google Play to pre-download the OCR model when the app is installed 
 
 ---
 
-## 📱 Model Distribution Models
-
-1. **Unbundled (Default in this project)**:
-   - Dependency: `com.google.android.gms:play-services-mlkit-text-recognition`
-   - Model is shared via **Google Play Services**.
-   - APK size increase: **~500 KB**.
-   - Automatically loaded from the device cache if already downloaded by other Google apps (e.g., Google Lens, Translate).
-
-2. **Bundled (Alternative for non-GMS devices)**:
-   - Dependency: `com.google.mlkit:text-recognition`
-   - Model weights are packaged directly inside the APK.
-   - APK size increase: **~10-12 MB**.
-   - Works immediately on fresh devices without Google Play Services or network access.
-
----
-
 ## 🚀 Getting Started
 
-1. Clone or open the repository in **Android Studio (Ladybug or newer)**.
+1. Clone or open the repository in **Android Studio (Ladybug / 2024.2.1+)**.
 2. Sync the project with Gradle files.
-3. Run on an Android device or emulator with Google Play Services (API 23+).
-4. Launch the app, pick any image containing printed text from the gallery, and view the extracted text instantly.
+3. Run on an Android device or emulator (API 23+).
+4. Tap **Take Photo** to launch the in-app camera or **Gallery** to select an existing photo.
+5. Touch and drag across any text directly on the photo to select and copy text instantly.

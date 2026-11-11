@@ -58,4 +58,10 @@ dependencies {
 
     // Coil (Compose me image display karne ke liye)
     implementation(libs.coil.compose)
+
+    // CameraX for in-app camera capture (no system camera confirmation screen)
+    implementation(libs.androidx.camera.core)
+    implementation(libs.androidx.camera.camera2)
+    implementation(libs.androidx.camera.lifecycle)
+    implementation(libs.androidx.camera.view)
 }
