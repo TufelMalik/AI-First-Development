@@ -4,31 +4,61 @@ An Android application demonstrating **On-Device Artificial Intelligence** using
 
 ---
 
-## 📱 Screenshots & App Showcase (Parent-Child Hierarchy)
+## 📱 Screenshots & App Hierarchy Flow
 
-```text
-📱 App Main Entry Point (Home Dashboard)
- │
- ├── 📸 Child Mode 1: Fast In-App CameraX Capture (Zero System Confirmation)
- │
- └── 🖼️ Child Mode 2: On-Image Text Inspector (Exact Coordinates & Pinch-to-Zoom)
-```
+<div align="center">
 
-### 1. 🏠 Parent Surface: Main Home Dashboard
-> **Central Entry Point**: Built with Material 3 floating action bar containing `Take Photo` and `Gallery` controls.
+  <!-- TOP PARENT SCREEN -->
+  <h3>🏠 Parent Screen: Main Home Dashboard</h3>
+  <img src="screenshots/ocr_app_preview.webp" width="280" alt="Parent Screen: Home Dashboard" />
 
-<p align="center">
-  <img src="screenshots/ocr_app_preview.webp" width="300" alt="Parent: Home Dashboard" />
-</p>
+  <!-- BRANCHING FLOW DIAGRAM -->
+  <pre>
+                      ┌─────────────────────────┴─────────────────────────┐
+                      │                                                   │
+                      ▼                                                   ▼
+            [🖼️ Gallery Button]                                 [📸 Take Photo Button]
+  </pre>
 
----
+  <!-- CHILD SCREENS GRID -->
+  <table border="0" align="center" style="border-collapse: collapse;">
+    <tr>
+      <td align="center" width="340">
+        <b>🖼️ Child Screen A: On-Image Text Inspector</b><br>
+        <i>(Triggered via Gallery Button)</i>
+      </td>
+      <td width="30"></td>
+      <td align="center" width="340">
+        <b>📸 Child Screen B: Fast In-App CameraX Capture</b><br>
+        <i>(Triggered via Take Photo Button)</i>
+      </td>
+    </tr>
+    <tr>
+      <td align="center" valign="top">
+        <br>
+        <img src="screenshots/ocr_galery_image_text_extractor_preview.webp" width="260" alt="Child A: On-Image Text Inspector" />
+        <br><br>
+        <div align="left">
+          • <b>Exact Coordinates</b>: Selectable text overlay at <code>(X, Y, W, H)</code><br>
+          • <b>Direct Touch & Drag</b>: Select & copy text directly off the photo<br>
+          • <b>Pinch-to-Zoom</b>: 1x to 5x zoom with double-tap reset
+        </div>
+      </td>
+      <td></td>
+      <td align="center" valign="top">
+        <br>
+        <img src="screenshots/ocr_camera_text_extractor_preview.webp" width="260" alt="Child B: In-App CameraX" />
+        <br><br>
+        <div align="left">
+          • <b>Zero System Confirmation</b>: No external camera prompt screen<br>
+          • <b>Minimal Latency Shutter</b>: Direct memory <code>ImageProxy</code> capture<br>
+          • <b>0% Idle Battery</b>: Unbinds camera sensor immediately
+        </div>
+      </td>
+    </tr>
+  </table>
 
-### 2. 🌿 Child Features & Extraction Modes
-
-| 📸 Child Feature 1: Fast In-App CameraX | 🖼️ Child Feature 2: On-Image Text Inspector |
-| :---: | :---: |
-| <img src="screenshots/ocr_camera_text_extractor_preview.webp" width="280" alt="Child: In-App CameraX" /> | <img src="screenshots/ocr_galery_image_text_extractor_preview.webp" width="280" alt="Child: On-Image Text Inspector" /> |
-| **Key Capabilities**:<br>• **Zero System Confirmation**: Eliminates external system camera app prompts (`X` / `✓`).<br>• **Minimal Latency**: In-memory `ImageProxy` capture.<br>• **0% Idle Battery Drain**: Unbinds camera sensor immediately after capture. | **Key Capabilities**:<br>• **Exact Coordinate Overlay**: Selectable text positioned at `(X, Y, W, H)` on photo.<br>• **Direct Touch & Drag**: Touch and drag over photo text to select & copy.<br>• **Pinch-to-Zoom (1x to 5x)**: Text selection overlays move in sync with photo zoom & pan. |
+</div>
 
 ---
 
@@ -138,6 +168,3 @@ dependencies {
 3. Run on an Android device or emulator (API 23+).
 4. Tap **Take Photo** to launch the in-app camera or **Gallery** to select an existing photo.
 5. Touch and drag across any text directly on the photo to select and copy text instantly.
-
-
----
