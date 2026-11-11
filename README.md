@@ -138,3 +138,6 @@ dependencies {
 3. Run on an Android device or emulator (API 23+).
 4. Tap **Take Photo** to launch the in-app camera or **Gallery** to select an existing photo.
 5. Touch and drag across any text directly on the photo to select and copy text instantly.
+
+
+---
